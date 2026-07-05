@@ -25,18 +25,21 @@ public class AuthService {
         User user = User.builder()
                 .userId(UUID.randomUUID().toString())
                 .name(request.getName())
+                .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role("USER")
                 .build();
 
-        String refreshToken = UUID.randomUUID().toString();
-        user.setRefreshToken(refreshToken);
         userRepository.save(user);
 
+        String accessToken = jwtService.generateToken(
+                request.getEmail());
+
+        String refreshToken = UUID.randomUUID().toString();
+
         return AuthResponse.builder()
-                .accessToken(jwtService.generateToken(user.getEmail()))
+                .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
-    }
 
+    }
 }
