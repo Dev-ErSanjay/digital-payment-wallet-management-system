@@ -5,8 +5,10 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.payment.wallet.wallet.concurrency.WalletLockManager;
 import com.payment.wallet.wallet.dto.WalletResponse;
 import com.payment.wallet.wallet.entity.Wallet;
+import com.payment.wallet.wallet.metrics.WalletMetrics;
 import com.payment.wallet.wallet.repository.WalletRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 public class WalletService {
 
     private final WalletRepository walletRepository;
+    private final WalletLockManager walletLockManager;
+    private final WalletMetrics walletMetrics;
 
     public WalletResponse createWallet(String email) {
 
@@ -32,23 +36,48 @@ public class WalletService {
 
     public WalletResponse credit(String walletId, BigDecimal amount) {
 
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow();
-        wallet.setBalance(wallet.getBalance().add(amount));
-        walletRepository.save(wallet);
+        var lock = walletLockManager.getLock(walletId);
+        lock.lock();
 
-        return response(wallet);
+        try {
+            Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+            wallet.setBalance(wallet.getBalance().add(amount));
+            walletRepository.save(wallet);
+
+            walletMetrics.success();
+
+            return response(wallet);
+        } catch (Exception e) {
+            walletMetrics.failure();
+            throw e;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public WalletResponse debit(String walletId, BigDecimal amount) {
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow();
-        if (wallet.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("Insufficient balance");
+
+        var lock = walletLockManager.getLock(walletId);
+        lock.lock();
+
+        try {
+            Wallet wallet = walletRepository.findById(walletId).orElseThrow();
+            if (wallet.getBalance().compareTo(amount) < 0) {
+                throw new RuntimeException("Insufficient balance");
+            }
+
+            wallet.setBalance(wallet.getBalance().subtract(amount));
+            walletRepository.save(wallet);
+
+            walletMetrics.success();
+
+            return response(wallet);
+        } catch (Exception e) {
+            walletMetrics.failure();
+            throw e;
+        } finally {
+            lock.unlock();
         }
-
-        wallet.setBalance(wallet.getBalance().subtract(amount));
-        walletRepository.save(wallet);
-
-        return response(wallet);
     }
 
     private WalletResponse response(Wallet wallet) {
