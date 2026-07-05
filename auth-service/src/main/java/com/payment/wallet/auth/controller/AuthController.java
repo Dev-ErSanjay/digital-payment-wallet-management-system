@@ -1,0 +1,27 @@
+package com.payment.wallet.auth.controller;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.payment.wallet.auth.dto.AuthResponse;
+import com.payment.wallet.auth.dto.RegisterRequest;
+import com.payment.wallet.auth.service.AuthService;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/auth")
+@RestController
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+
+        return authService.register(request);
+    }
+
+}
