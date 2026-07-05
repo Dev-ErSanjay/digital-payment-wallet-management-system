@@ -10,7 +10,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private final String SECRET = "my-secret-key-my-secret-key";
+    private final String SECRET = "digital-payment-wallet-management-system-secret-key-2026";
 
     public String generateToken(String email) {
 
