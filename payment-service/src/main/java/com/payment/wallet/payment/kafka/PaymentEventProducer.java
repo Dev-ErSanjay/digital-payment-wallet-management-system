@@ -1,4 +1,4 @@
-package com.parment.wallet.payment.kafka;
+package com.payment.wallet.payment.kafka;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

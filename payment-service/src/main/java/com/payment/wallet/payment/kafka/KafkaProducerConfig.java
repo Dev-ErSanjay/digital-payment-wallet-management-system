@@ -1,4 +1,4 @@
-package com.parment.wallet.payment.kafka;
+package com.payment.wallet.payment.kafka;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

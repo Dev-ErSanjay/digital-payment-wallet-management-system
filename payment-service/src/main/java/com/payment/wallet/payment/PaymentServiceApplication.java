@@ -1,4 +1,4 @@
-package com.parment.wallet.payment;
+package com.payment.wallet.payment;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -25,6 +25,7 @@ public class DynamoDbInitializer implements CommandLineRunner {
         createTable("Users", "userId");
         createTable("Wallets", "walletId");
         createTable("Transactions", "transactionId");
+        createTable("PaymentsTable", "paymentId");
     }
 
     private void createTable(String tableName, String key) {
