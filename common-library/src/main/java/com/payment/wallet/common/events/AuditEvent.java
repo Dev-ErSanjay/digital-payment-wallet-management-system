@@ -1,5 +1,7 @@
 package com.payment.wallet.common.events;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,11 +11,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentCreatedEvent {
+public class AuditEvent {
 
-    private String paymentId;
-    private String fromWallet;
-    private String toWallet;
-    private Double amount;
-    private String status;
+    private String eventId;
+    private String service;
+    private String action;
+    private Instant timestamp;
 }

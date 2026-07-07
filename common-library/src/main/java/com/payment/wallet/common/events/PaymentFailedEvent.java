@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaymentCreatedEvent {
+public class PaymentFailedEvent {
 
     private String paymentId;
-    private String fromWallet;
-    private String toWallet;
-    private Double amount;
-    private String status;
+    private String reason;
 }
